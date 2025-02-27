@@ -1,0 +1,267 @@
+openapi: 3.0.0
+info: 
+  title: Survey agregator API
+  version: 0.0.1
+paths:
+  /admin/register:
+    post:
+      tags:
+       - admin
+      summary: Admin registration
+      responses:
+        '200':
+          description: Registration success
+          content:
+            application/json:
+              schema:
+                type: object
+      parameters:
+        - name: Name
+          in: query
+          description: Name
+          schema:
+            type: string
+        - name: Email
+          in: query
+          required: True
+          description: Name
+          schema:
+            type: string
+        - name: Password
+          in: query
+          required: True
+          description: Name
+          schema:
+            type: string
+  /admin/login:
+    post:
+      tags:
+       - admin
+      summary: Admin login
+      responses:
+        '200':
+          description: Login success
+          content:
+            application/json:
+              schema:
+                type: object
+      parameters:
+        - name: Email
+          in: query
+          required: True
+          description: Name
+          schema:
+            type: string
+        - name: Password
+          in: query
+          required: True
+          description: Name
+          schema:
+            type: string
+  /admin/profile:
+    get:
+      tags:
+       - admin
+      summary: Admin profile
+      responses:
+        '200':
+          description: Info received
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+      parameters:
+        - name: token
+          in: cookie
+          required: True
+          description: Name
+          schema:
+            type: string
+    put:
+      tags:
+       - admin
+      summary: Profile update
+      responses:
+        '200':
+          description: Info updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+      parameters:
+        - name: Name
+          in: query
+          required: False
+          description: New name
+          schema:
+            type: string
+        - name: Email
+          in: query
+          required: False
+          description: New email
+          schema:
+            type: string
+  /admin/logout:
+    delete:
+      tags:
+       - admin
+      summary: Logout from account
+      responses:
+        '200':
+          description: Exit success
+  /admin/surveys/new:
+    post:
+      tags:
+       - admin
+      summary: Create new survey
+      responses:
+        '200':
+          description: Survey created
+      parameters:
+        - name: Survey
+          in: query
+          schema:
+            $ref: "#/components/schemas/Survey"
+  /admin/surveys:
+    get:
+      tags:
+       - admin
+      summary: Survey list
+      parameters:
+        - name: token
+          in: cookie
+          required: True
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Survey list success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Survey"
+  /admin/surveys/{SurveyID}:
+    get:
+      tags:
+       - admin
+      summary: Survey by id
+      parameters:
+        - name: token
+          in: cookie
+          required: True
+          schema:
+            type: string
+        - name: SurveyID
+          in: path
+          required: True
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Survey list found success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Survey"
+  /surveys/{SurveyID}:
+    get:
+      tags:
+       - survey
+      summary: Survey by id
+      parameters:
+        - name: SurveyID
+          in: path
+          required: True
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Survey found success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Survey"
+  /surveys/{SurveyID}/submit:
+    post:
+      tags:
+       - survey
+      summary: Survey answers send
+      parameters:
+        - name: SurveyID
+          in: path
+          required: True
+          schema:
+            type: string
+        - name: Answers
+          in: query
+          required: True
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Answer"
+      responses:
+        '200':
+          description: Result sended success
+  
+components:
+  schemas:
+    Profile:
+      type: object
+      required:
+        - Name
+        - Email
+      properties:
+        Name:
+          type: string
+          example: example
+        Email:
+          type: string
+          example: example@example.com
+    Survey:
+      type: object
+      required:
+        - Title
+        - Description
+        - Questions
+      properties:
+        SurveyID:
+          type: string
+        Title:
+          type: string
+        Description:
+          type: string
+        Questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Question"
+    Question:
+      type: object
+      required:
+        - Text
+        - Answers
+      properties:
+        QuestionID:
+          type: string
+        SurveyID:
+          type: string
+        Text:
+          type: string
+        Answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Answer"
+    Answer:
+      type: object
+      required:
+        - Text
+      properties:
+        AnswerQuantity:
+          type: integer
+        QuestionID:
+          type: string
+        AnswerID:
+          type: string
+        AnswerText:
+          type: string

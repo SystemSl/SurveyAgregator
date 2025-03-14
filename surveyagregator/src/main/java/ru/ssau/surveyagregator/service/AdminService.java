@@ -25,4 +25,11 @@ public class AdminService {
         adminRepository.save(newAdmin);
         return true;
     }
+
+    @Transactional
+    public boolean registerAdmin(Admin newAdmin) {
+        newAdmin.setPassword(passwordEncoder.encode(newAdmin.getPassword()));
+        adminRepository.save(newAdmin);
+        return true;
+    }
 }

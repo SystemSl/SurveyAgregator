@@ -21,4 +21,10 @@ public class SurveyService {
         surveyRepository.save(newSurvey);
         return true;
     }
+
+    @Transactional
+    public boolean createSurvey(Survey newSurvey) {
+        surveyRepository.save(newSurvey);
+        return true;
+    }
 }

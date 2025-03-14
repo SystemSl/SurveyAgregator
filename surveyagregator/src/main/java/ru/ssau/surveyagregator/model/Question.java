@@ -2,6 +2,9 @@ package ru.ssau.surveyagregator.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "questions")
 public class Question {
@@ -14,13 +17,12 @@ public class Question {
     public Question() {
     }
 
+    @ManyToOne
+    private Survey surveyid;
+
     public Question(String questiontext) {
         this.questiontext = questiontext;
     }
-
-    @ManyToOne
-    @JoinColumn(name = "surveyid", nullable = false)
-    private Survey survey;
 
     public Integer getQuestionid() {
         return questionid;
@@ -38,11 +40,14 @@ public class Question {
         this.questiontext = questiontext;
     }
 
-    public Survey getSurvey() {
-        return survey;
+    @OneToMany(mappedBy="questionid")
+    private Set<Answer> answers = new HashSet<>();
+
+    public Set<Answer> getAnswers() {
+        return answers;
     }
 
-    public void setSurvey(Survey survey) {
-        this.survey = survey;
+    public void setAnswers(Set<Answer> answers) {
+        this.answers = answers;
     }
 }

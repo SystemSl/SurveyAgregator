@@ -56,15 +56,4 @@ public class Admin {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(
-            name = "surveycreators",
-            joinColumns = { @JoinColumn(name = "adminid") },
-            inverseJoinColumns = { @JoinColumn(name = "surveyid") })
-    private Set<Survey> surveys = new HashSet<>();
-
 }

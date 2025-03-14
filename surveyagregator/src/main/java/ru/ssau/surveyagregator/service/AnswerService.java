@@ -21,5 +21,11 @@ public class AnswerService {
         AnswerRepository.save(newAnswer);
         return true;
     }
+
+    @Transactional
+    public boolean createAnswer(Answer newAnswer) {
+        AnswerRepository.save(newAnswer);
+        return true;
+    }
 }
 

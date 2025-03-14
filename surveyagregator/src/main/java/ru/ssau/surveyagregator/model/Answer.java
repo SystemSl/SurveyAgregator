@@ -21,10 +21,6 @@ public class Answer {
         this.answerquantity = answerquantity;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "questionid", nullable = false)
-    private Question question;
-
     public Integer getAnswerid() {
         return answerid;
     }
@@ -48,12 +44,6 @@ public class Answer {
     public void setAnswerquantity(Integer answerquantity) {
         this.answerquantity = answerquantity;
     }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
+    @ManyToOne
+    private Question questionid;
 }

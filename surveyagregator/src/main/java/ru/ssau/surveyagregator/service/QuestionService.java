@@ -21,5 +21,11 @@ public class QuestionService {
         questionRepository.save(newQuestion);
         return true;
     }
+
+    @Transactional
+    public boolean createQuestion(Question newQuestion) {
+        questionRepository.save(newQuestion);
+        return true;
+    }
 }
 

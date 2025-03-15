@@ -74,4 +74,13 @@ public class Survey {
     public void setAdmins(Set<Admin> admins) {
         this.admins = admins;
     }
+
+    public void addQuestion(Question question) {
+        question.setSurvey(this);
+        questions.add(question);
+    }
+
+    public void addAdmin(Admin admin) {
+        admins.add(admin);
+    }
 }

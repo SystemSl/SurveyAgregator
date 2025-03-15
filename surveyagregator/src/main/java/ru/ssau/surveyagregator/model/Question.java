@@ -60,4 +60,9 @@ public class Question {
     public void setSurvey(Survey survey) {
         this.survey = survey;
     }
+
+    public void addAnswer(Answer answer) {
+        answer.setQuestion(this);
+        answers.add(answer);
+    }
 }

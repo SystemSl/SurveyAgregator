@@ -10,10 +10,13 @@ import java.util.Set;
 public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer adminid;
-
+    @Column(name="adminid")
+    private Integer adminId;
+    @Column(name="name")
     private String name;
+    @Column(name="email")
     private String email;
+    @Column(name="password")
     private String password;
 
     public Admin() {
@@ -26,11 +29,11 @@ public class Admin {
     }
 
     public Integer getAdminId() {
-        return adminid;
+        return adminId;
     }
 
-    public void setAdminId(Integer adminid) {
-        this.adminid = adminid;
+    public void setAdminId(Integer adminId) {
+        this.adminId = adminId;
     }
 
     public String getName() {

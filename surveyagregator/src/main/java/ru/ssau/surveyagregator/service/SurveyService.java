@@ -27,4 +27,8 @@ public class SurveyService {
         surveyRepository.save(newSurvey);
         return true;
     }
+
+    public void clear() {
+        surveyRepository.deleteAll();
+    }
 }

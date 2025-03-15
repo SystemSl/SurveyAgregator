@@ -32,4 +32,8 @@ public class AdminService {
         adminRepository.save(newAdmin);
         return true;
     }
+
+    public void clear() {
+        adminRepository.deleteAll();
+    }
 }

@@ -27,5 +27,9 @@ public class QuestionService {
         questionRepository.save(newQuestion);
         return true;
     }
+
+    public void clear() {
+        questionRepository.deleteAll();
+    }
 }
 

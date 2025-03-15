@@ -7,7 +7,8 @@ import jakarta.persistence.*;
 public class SurveyCreator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer adminrelid;
+    @Column(name = "adminrelid")
+    private Integer adminRelId;
 
     @ManyToOne
     @JoinColumn(name = "surveyid", nullable = false)

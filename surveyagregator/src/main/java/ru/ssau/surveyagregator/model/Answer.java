@@ -7,43 +7,53 @@ import jakarta.persistence.*;
 public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer answerid;
-
-    private String answertext;
-
-    private Integer answerquantity;
+    @Column(name="answerid")
+    private Integer answerId;
+    @Column(name="answertext")
+    private String answerText;
+    @Column(name="answerquantity")
+    private Integer answerQuantity;
 
     public Answer() {
     }
 
-    public Answer(String answertext, Integer answerquantity) {
-        this.answertext = answertext;
-        this.answerquantity = answerquantity;
+    public Answer(String answerText, Integer answerQuantity) {
+        this.answerText = answerText;
+        this.answerQuantity = answerQuantity;
     }
 
-    public Integer getAnswerid() {
-        return answerid;
+    public Integer getAnswerId() {
+        return answerId;
     }
 
-    public void setAnswerid(Integer answerid) {
-        this.answerid = answerid;
+    public void setAnswerId(Integer answerId) {
+        this.answerId = answerId;
     }
 
-    public String getAnswertext() {
-        return answertext;
+    public String getAnswerText() {
+        return answerText;
     }
 
-    public void setAnswertext(String answertext) {
-        this.answertext = answertext;
+    public void setAnswerText(String answerText) {
+        this.answerText = answerText;
     }
 
-    public Integer getAnswerquantity() {
-        return answerquantity;
+    public Integer getAnswerQuantity() {
+        return answerQuantity;
     }
 
-    public void setAnswerquantity(Integer answerquantity) {
-        this.answerquantity = answerquantity;
+    public void setAnswerQuantity(Integer answerQuantity) {
+        this.answerQuantity = answerQuantity;
     }
-    @ManyToOne
-    private Question questionid;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="questionid", nullable = false)
+    private Question question;
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
 }

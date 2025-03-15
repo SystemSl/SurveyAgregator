@@ -10,37 +10,39 @@ import java.util.Set;
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer questionid;
-
-    private String questiontext;
+    @Column(name = "questionid")
+    private Integer questionId;
+    @Column(name = "questiontext")
+    private String questionText;
 
     public Question() {
     }
 
-    @ManyToOne
-    private Survey surveyid;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="surveyid", nullable = false)
+    private Survey survey;
 
-    public Question(String questiontext) {
-        this.questiontext = questiontext;
+    public Question(String questionText) {
+        this.questionText = questionText;
     }
 
-    public Integer getQuestionid() {
-        return questionid;
+    public Integer getQuestionId() {
+        return questionId;
     }
 
-    public void setQuestionid(Integer questionid) {
-        this.questionid = questionid;
+    public void setQuestionId(Integer questionId) {
+        this.questionId = questionId;
     }
 
-    public String getQuestiontext() {
-        return questiontext;
+    public String getQuestionText() {
+        return questionText;
     }
 
-    public void setQuestiontext(String questiontext) {
-        this.questiontext = questiontext;
+    public void setQuestionText(String questionText) {
+        this.questionText = questionText;
     }
 
-    @OneToMany(mappedBy="questionid")
+    @OneToMany(mappedBy="question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Answer> answers = new HashSet<>();
 
     public Set<Answer> getAnswers() {
@@ -49,5 +51,13 @@ public class Question {
 
     public void setAnswers(Set<Answer> answers) {
         this.answers = answers;
+    }
+
+    public Survey getSurvey() {
+        return survey;
+    }
+
+    public void setSurvey(Survey survey) {
+        this.survey = survey;
     }
 }

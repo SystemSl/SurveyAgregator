@@ -10,44 +10,46 @@ import java.util.Set;
 public class Survey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer surveyid;
-
-    private String surveytitle;
-    private String surveydescription;
+    @Column(name = "surveyid")
+    private Integer surveyId;
+    @Column(name = "surveytitle")
+    private String surveyTitle;
+    @Column(name = "surveydescription")
+    private String surveyDescription;
 
     public Survey() {
     }
 
-    public Survey(String surveytitle, String surveydescription) {
-        this.surveytitle = surveytitle;
-        this.surveydescription = surveydescription;
+    public Survey(String surveyTitle, String surveyDescription) {
+        this.surveyTitle = surveyTitle;
+        this.surveyDescription = surveyDescription;
     }
 
-    public Integer getSurveyid() {
-        return surveyid;
+    public Integer getSurveyId() {
+        return surveyId;
     }
 
-    public void setSurveyid(Integer surveyid) {
-        this.surveyid = surveyid;
+    public void setSurveyId(Integer surveyId) {
+        this.surveyId = surveyId;
     }
 
-    public String getSurveytitle() {
-        return surveytitle;
+    public String getSurveyTitle() {
+        return surveyTitle;
     }
 
-    public void setSurveytitle(String surveytitle) {
-        this.surveytitle = surveytitle;
+    public void setSurveyTitle(String surveyTitle) {
+        this.surveyTitle = surveyTitle;
     }
 
-    public String getSurveydescription() {
-        return surveydescription;
+    public String getSurveyDescription() {
+        return surveyDescription;
     }
 
-    public void setSurveydescription(String surveydescription) {
-        this.surveydescription = surveydescription;
+    public void setSurveyDescription(String surveyDescription) {
+        this.surveyDescription = surveyDescription;
     }
 
-    @OneToMany(mappedBy="surveyid")
+    @OneToMany(mappedBy="survey", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Question> questions = new HashSet<>();
 
     public Set<Question> getQuestions() {
@@ -60,7 +62,7 @@ public class Survey {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "surveycreators",
+            name = "surveyCreators",
             joinColumns = { @JoinColumn(name = "surveyid") },
             inverseJoinColumns = { @JoinColumn(name = "adminid") })
     private Set<Admin> admins = new HashSet<>();

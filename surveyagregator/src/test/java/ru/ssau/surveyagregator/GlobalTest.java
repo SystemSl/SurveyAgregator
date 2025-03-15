@@ -33,6 +33,8 @@ public class GlobalTest {
 
     @Test
     public void testAllEntities() {
+        adminService.clear();
+        surveyService.clear();
         String name = "admin";
         String email = "admin@example.com";
         String password = "password";
@@ -55,13 +57,20 @@ public class GlobalTest {
         Q2.setAnswers(answers2);
         questions.add(Q1);
         questions.add(Q2);
+        A11.setQuestion(Q1);
+        A12.setQuestion(Q1);
+        A21.setQuestion(Q2);
+        A22.setQuestion(Q2);
 
         Survey survey = new Survey(title, description);
         survey.setQuestions(questions);
+        Q1.setSurvey(survey);
+        Q2.setSurvey(survey);
         Set<Admin> admins = new HashSet<>();
         Admin admin = new Admin(name, email, password);
         adminService.registerAdmin(admin);
         admins.add(admin);
         survey.setAdmins(admins);
+        surveyService.createSurvey(survey);
     }
 }

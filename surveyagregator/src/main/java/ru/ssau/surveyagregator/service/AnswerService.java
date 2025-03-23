@@ -16,8 +16,8 @@ public class AnswerService {
     }
 
     @Transactional
-    public boolean createAnswer(String text, Integer quantity) {
-        Answer newAnswer = new Answer(text, quantity);
+    public boolean createAnswer(String text) {
+        Answer newAnswer = Answer.builder().answerText(text).build();
         answerRepository.save(newAnswer);
         return true;
     }

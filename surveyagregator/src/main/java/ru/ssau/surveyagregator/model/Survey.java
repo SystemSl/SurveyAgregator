@@ -1,10 +1,16 @@
 package ru.ssau.surveyagregator.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "surveys")
 public class Survey {
@@ -17,63 +23,17 @@ public class Survey {
     @Column(name = "surveydescription")
     private String surveyDescription;
 
-    public Survey() {
-    }
-
-    public Survey(String surveyTitle, String surveyDescription) {
-        this.surveyTitle = surveyTitle;
-        this.surveyDescription = surveyDescription;
-    }
-
-    public Integer getSurveyId() {
-        return surveyId;
-    }
-
-    public void setSurveyId(Integer surveyId) {
-        this.surveyId = surveyId;
-    }
-
-    public String getSurveyTitle() {
-        return surveyTitle;
-    }
-
-    public void setSurveyTitle(String surveyTitle) {
-        this.surveyTitle = surveyTitle;
-    }
-
-    public String getSurveyDescription() {
-        return surveyDescription;
-    }
-
-    public void setSurveyDescription(String surveyDescription) {
-        this.surveyDescription = surveyDescription;
-    }
-
+    @Builder.Default
     @OneToMany(mappedBy="survey", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Question> questions = new HashSet<>();
 
-    public Set<Question> getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(Set<Question> questions) {
-        this.questions = questions;
-    }
-
+    @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "surveyCreators",
             joinColumns = { @JoinColumn(name = "surveyid") },
             inverseJoinColumns = { @JoinColumn(name = "adminid") })
     private Set<Admin> admins = new HashSet<>();
-
-    public Set<Admin> getAdmins() {
-        return admins;
-    }
-
-    public void setAdmins(Set<Admin> admins) {
-        this.admins = admins;
-    }
 
     public void addQuestion(Question question) {
         question.setSurvey(this);

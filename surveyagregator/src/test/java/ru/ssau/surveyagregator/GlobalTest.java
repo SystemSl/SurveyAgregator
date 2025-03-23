@@ -11,11 +11,6 @@ import ru.ssau.surveyagregator.service.AdminService;
 import ru.ssau.surveyagregator.service.AnswerService;
 import ru.ssau.surveyagregator.service.QuestionService;
 import ru.ssau.surveyagregator.service.SurveyService;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class GlobalTest {
 
@@ -40,14 +35,14 @@ public class GlobalTest {
         String password = "password";
         String title = "Survey 1";
         String description = "Test survey";
-        Question Q1 = new Question("First question");
-        Answer A11 = new Answer("Yes",0);
-        Answer A12 = new Answer("No",0);
-        Question Q2 = new Question("Second question");
-        Answer A21 = new Answer("Yes",0);
-        Answer A22 = new Answer("No",0);
-        Survey survey = new Survey(title, description);
-        Admin admin = new Admin(name, email, password);
+        Question Q1 = Question.builder().questionText("First question").build();
+        Answer A11 = Answer.builder().answerText("Yes").build();
+        Answer A12 = Answer.builder().answerText("No").build();
+        Question Q2 = Question.builder().questionText("Second question").build();
+        Answer A21 = Answer.builder().answerText("Yes").build();
+        Answer A22 = Answer.builder().answerText("No").build();
+        Survey survey = Survey.builder().surveyDescription(description).surveyTitle(title).build();
+        Admin admin = Admin.builder().name(name).password(password).email(email).build();
         Q1.addAnswer(A11);
         Q1.addAnswer(A12);
         Q2.addAnswer(A21);

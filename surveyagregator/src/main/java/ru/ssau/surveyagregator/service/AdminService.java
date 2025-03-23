@@ -21,7 +21,7 @@ public class AdminService {
     @Transactional
     public boolean registerAdmin(String name, String email, String password) {
         String encodedPassword = passwordEncoder.encode(password);
-        Admin newAdmin = new Admin(name, email, encodedPassword);
+        Admin newAdmin = Admin.builder().name(name).password(password).email(email).build();
         adminRepository.save(newAdmin);
         return true;
     }

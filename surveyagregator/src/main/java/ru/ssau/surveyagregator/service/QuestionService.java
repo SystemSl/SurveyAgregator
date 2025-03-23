@@ -17,7 +17,7 @@ public class QuestionService {
 
     @Transactional
     public boolean createQuestion(String text) {
-        Question newQuestion = new Question(text);
+        Question newQuestion = Question.builder().questionText(text).build();
         questionRepository.save(newQuestion);
         return true;
     }

@@ -7,10 +7,12 @@ import ru.ssau.surveyagregator.model.Admin;
 import ru.ssau.surveyagregator.model.Answer;
 import ru.ssau.surveyagregator.model.Question;
 import ru.ssau.surveyagregator.model.Survey;
+import ru.ssau.surveyagregator.responses.AdminSurveysResponse;
 import ru.ssau.surveyagregator.service.AdminService;
 import ru.ssau.surveyagregator.service.AnswerService;
 import ru.ssau.surveyagregator.service.QuestionService;
 import ru.ssau.surveyagregator.service.SurveyService;
+
 @SpringBootTest
 public class GlobalTest {
 
@@ -52,5 +54,11 @@ public class GlobalTest {
         survey.addAdmin(admin);
         adminService.registerAdmin(admin);
         surveyService.createSurvey(survey);
+    }
+
+    @Test
+    public void testAdminSurveys() {
+        AdminSurveysResponse surveys = surveyService.findSurveys(22);
+        System.out.println(surveys);
     }
 }

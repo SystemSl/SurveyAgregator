@@ -6,7 +6,8 @@ import java.util.List;
 
 @Data
 public class SurveyFormRequest {
-    List<QuestionRequest> questions;
+    private List<Integer> adminId;
+    private List<QuestionRequest> questions;
     private String title;
     private String description;
 

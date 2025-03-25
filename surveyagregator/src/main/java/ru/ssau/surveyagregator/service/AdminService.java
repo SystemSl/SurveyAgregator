@@ -6,6 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ssau.surveyagregator.model.Admin;
 import ru.ssau.surveyagregator.repository.AdminRepository;
+import ru.ssau.surveyagregator.requests.AdminFormRequest;
+import ru.ssau.surveyagregator.requests.AdminUpdateRequest;
+
+import java.util.List;
 
 @Service
 public class AdminService {
@@ -30,6 +34,32 @@ public class AdminService {
     public boolean registerAdmin(Admin newAdmin) {
         newAdmin.setPassword(passwordEncoder.encode(newAdmin.getPassword()));
         adminRepository.save(newAdmin);
+        return true;
+    }
+
+    @Transactional
+    public boolean registerAdmin(AdminFormRequest admin) {
+        Admin newAdmin = Admin.builder().name(admin.getName()).password(admin.getPassword()).email(admin.getEmail()).build();
+        newAdmin.setPassword(passwordEncoder.encode(newAdmin.getPassword()));
+        adminRepository.save(newAdmin);
+        return true;
+    }
+
+    @Transactional
+    public Admin findById(Integer id) {
+        return adminRepository.findById(id).get();
+    }
+
+    @Transactional
+    public List<Admin> findAllById(List<Integer> ids) {
+        return adminRepository.findAllById(ids);
+    }
+
+    @Transactional
+    public boolean update(AdminUpdateRequest request, Admin admin) {
+        admin.setEmail(request.getEmail());
+        admin.setName(request.getName());
+        adminRepository.save(admin);
         return true;
     }
 

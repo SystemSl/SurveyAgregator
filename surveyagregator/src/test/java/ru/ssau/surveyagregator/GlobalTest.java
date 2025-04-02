@@ -12,6 +12,8 @@ import ru.ssau.surveyagregator.service.AnswerService;
 import ru.ssau.surveyagregator.service.QuestionService;
 import ru.ssau.surveyagregator.service.SurveyService;
 
+import java.util.UUID;
+
 @SpringBootTest
 public class GlobalTest {
 
@@ -58,7 +60,6 @@ public class GlobalTest {
 
     @Test
     public void delete() {
-        adminService.clear();
-        surveyService.clear();
+        UUID a = UUID.fromString("9c64733b-e0d5-4490-aa12-ac8c829b6db9");
     }
 }

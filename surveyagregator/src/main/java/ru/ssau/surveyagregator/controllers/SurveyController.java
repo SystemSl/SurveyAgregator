@@ -21,6 +21,7 @@ public class SurveyController {
 
     @PostMapping("/{id}")
     ResponseEntity<?> sendAnswer(@PathVariable UUID id, @RequestBody AnswerRequest answer) {
+        System.out.println("avo");
         surveyService.saveAnswer(id, answer);
         return ResponseEntity.ok("Answers saved");
     }

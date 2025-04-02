@@ -6,8 +6,9 @@ import org.springframework.data.repository.query.Param;
 import ru.ssau.surveyagregator.model.Survey;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface SurveyRepository extends JpaRepository<Survey, Integer> {
+public interface SurveyRepository extends JpaRepository<Survey, UUID> {
     @Query("SELECT s FROM Survey s JOIN s.admins a WHERE a.adminId = :adminId")
-    List<Survey> findSurveysByAdminId(@Param("adminId") Integer adminId);
+    List<Survey> findSurveysByAdminId(@Param("adminId") UUID adminId);
 }

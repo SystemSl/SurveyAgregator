@@ -1,5 +1,5 @@
 CREATE TABLE admins (
-AdminID BIGSERIAL primary key,
+AdminID UUID primary key,
 Name VARCHAR(30) not null,
 Email VARCHAR(30) not null,
 Password VARCHAR(100) not null
@@ -7,25 +7,25 @@ Password VARCHAR(100) not null
 
 CREATE TABLE surveycreators (
 AdminRelID BIGSERIAL primary key,
-AdminID BIGSERIAL not null,
-SurveyID BIGSERIAL not null
+AdminID UUID not null,
+SurveyID UUID not null
 );
 
 CREATE TABLE surveys (
-SurveyID BIGSERIAL primary key,
+SurveyID UUID primary key,
 SurveyTitle TEXT not null,
 SurveyDescription TEXT not null
 );
 
 CREATE TABLE questions (
-QuestionID BIGSERIAL primary key,
-SurveyID BIGSERIAL not null,
+QuestionID UUID primary key,
+SurveyID UUID not null,
 QuestionText TEXT not null
 );
 
 CREATE TABLE answers (
-AnswerID BIGSERIAL primary key,
-QuestionID BIGSERIAL not null,
+AnswerID UUID primary key,
+QuestionID UUID not null,
 AnswerText TEXT not null,
 AnswerQuantity Decimal(10, 0) not null
 );

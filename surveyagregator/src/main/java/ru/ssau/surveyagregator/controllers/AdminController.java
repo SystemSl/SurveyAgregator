@@ -13,6 +13,7 @@ import ru.ssau.surveyagregator.service.AdminService;
 import ru.ssau.surveyagregator.service.SurveyService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -40,23 +41,23 @@ public class AdminController {
     }
 
     @GetMapping("/profile")
-    ResponseEntity<?> profileAdmin(@RequestParam Integer id) {
+    ResponseEntity<?> profileAdmin(@RequestParam UUID id) {
         Admin admin = adminService.findById(id);
         return ResponseEntity.ok(new AdminProfileResponse(admin.getEmail(), admin.getName()));
     }
 
     @GetMapping("/surveys")
-    ResponseEntity<?> allAdminSurveys(@RequestParam Integer id) {
+    ResponseEntity<?> allAdminSurveys(@RequestParam UUID id) {
         return ResponseEntity.ok(surveyService.findSurveys(id));
     }
 
     @GetMapping("/surveys/{id}")
-    ResponseEntity<?> adminSurvey(@PathVariable Integer id) {
+    ResponseEntity<?> adminSurvey(@PathVariable UUID id) {
         return ResponseEntity.ok(surveyService.findAdminSurvey(id));
     }
 
     @PutMapping("/profile")
-    ResponseEntity<?> updateSurvey(@RequestParam Integer id, @RequestBody AdminUpdateRequest request) {
+    ResponseEntity<?> updateSurvey(@RequestParam UUID id, @RequestBody AdminUpdateRequest request) {
         Admin admin = adminService.findById(id);
         adminService.update(request, admin);
         return ResponseEntity.ok("Profile updated");

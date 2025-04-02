@@ -3,6 +3,8 @@ package ru.ssau.surveyagregator.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -12,9 +14,9 @@ import lombok.*;
 @Table(name = "admins")
 public class Admin {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name="adminid")
-    private Integer adminId;
+    private UUID adminId;
     @Column(name="name")
     private String name;
     @Column(name="email")

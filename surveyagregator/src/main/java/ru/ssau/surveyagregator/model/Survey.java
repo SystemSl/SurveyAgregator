@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -15,9 +16,9 @@ import java.util.Set;
 @Table(name = "surveys")
 public class Survey {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "surveyid")
-    private Integer surveyId;
+    private UUID surveyId;
     @Column(name = "surveytitle")
     private String surveyTitle;
     @Column(name = "surveydescription")

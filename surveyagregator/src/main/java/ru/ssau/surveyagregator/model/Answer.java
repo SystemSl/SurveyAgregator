@@ -3,6 +3,9 @@ package ru.ssau.surveyagregator.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -12,14 +15,14 @@ import lombok.*;
 @Table(name = "answers")
 public class Answer {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "answerid")
-    private Integer answerId;
+    private UUID answerId;
     @Column(name = "answertext")
     private String answerText;
     @Builder.Default
     @Column(name = "answerquantity")
-    private Integer answerQuantity = 0;
+    private BigDecimal answerQuantity = BigDecimal.valueOf(0);
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "questionid", nullable = false)

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class SurveyResponse {
@@ -20,6 +21,6 @@ public class SurveyResponse {
     @Data
     public static class AnswerResponse {
         private String answer;
-        private Integer id;
+        private UUID id;
     }
 }

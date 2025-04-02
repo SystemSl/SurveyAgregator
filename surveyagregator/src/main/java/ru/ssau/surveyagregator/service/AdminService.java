@@ -10,6 +10,7 @@ import ru.ssau.surveyagregator.requests.AdminFormRequest;
 import ru.ssau.surveyagregator.requests.AdminUpdateRequest;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AdminService {
@@ -46,12 +47,12 @@ public class AdminService {
     }
 
     @Transactional
-    public Admin findById(Integer id) {
+    public Admin findById(UUID id) {
         return adminRepository.findById(id).get();
     }
 
     @Transactional
-    public List<Admin> findAllById(List<Integer> ids) {
+    public List<Admin> findAllById(List<UUID> ids) {
         return adminRepository.findAllById(ids);
     }
 

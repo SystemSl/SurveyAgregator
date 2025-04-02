@@ -6,7 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.ssau.surveyagregator.model.Answer;
 import ru.ssau.surveyagregator.repository.AnswerRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AnswerService {
@@ -31,10 +33,10 @@ public class AnswerService {
     }
 
     @Transactional
-    public boolean saveAnswer(List<Integer> answersId) {
+    public boolean saveAnswer(List<UUID> answersId) {
         List<Answer> answers = answerRepository.findAllById(answersId);
         for (Answer answer : answers) {
-            answer.setAnswerQuantity(answer.getAnswerQuantity() + 1);
+            answer.setAnswerQuantity(answer.getAnswerQuantity().add(BigDecimal.ONE));
         }
         return true;
     }

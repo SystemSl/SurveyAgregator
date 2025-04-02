@@ -16,6 +16,7 @@ import ru.ssau.surveyagregator.responses.SurveyResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class SurveyService {
@@ -64,11 +65,11 @@ public class SurveyService {
     }
 
     @Transactional
-    public AdminSurveysResponse findSurveys(Integer id) {
+    public AdminSurveysResponse findSurveys(UUID id) {
         List<Survey> surveys = surveyRepository.findSurveysByAdminId(id);
         List<String> titles = new ArrayList<>();
         List<String> descriptions = new ArrayList<>();
-        List<Integer> ids = new ArrayList<>();
+        List<UUID> ids = new ArrayList<>();
         for (Survey s : surveys) {
             titles.add(s.getSurveyTitle());
             descriptions.add(s.getSurveyDescription());
@@ -78,7 +79,7 @@ public class SurveyService {
     }
 
     @Transactional
-    public AdminSurveyResponse findAdminSurvey(Integer id) {
+    public AdminSurveyResponse findAdminSurvey(UUID id) {
         Survey survey = surveyRepository.findById(id).get();
         AdminSurveyResponse response = new AdminSurveyResponse();
         response.setTitle(survey.getSurveyTitle());
@@ -100,7 +101,7 @@ public class SurveyService {
     }
 
     @Transactional
-    public SurveyResponse findSurvey(Integer id) {
+    public SurveyResponse findSurvey(UUID id) {
         Survey survey = surveyRepository.findById(id).get();
         SurveyResponse response = new SurveyResponse();
         response.setTitle(survey.getSurveyTitle());
@@ -122,7 +123,7 @@ public class SurveyService {
     }
 
     @Transactional
-    public boolean saveAnswer(Integer id, AnswerRequest request) {
+    public boolean saveAnswer(UUID id, AnswerRequest request) {
         Survey survey = surveyRepository.findById(id).get();
         answerService.saveAnswer(request.getAnswersId());
         return true;

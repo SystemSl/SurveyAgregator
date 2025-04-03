@@ -1,8 +1,9 @@
 CREATE TABLE users_table (
 id UUID primary key,
-name VARCHAR(30) not null,
+username VARCHAR(30) not null,
 email VARCHAR(30) not null,
-password VARCHAR(100) not null
+password VARCHAR(100) not null,
+role VARCHAR(30) not null
 );
 
 CREATE TABLE surveycreators_table (

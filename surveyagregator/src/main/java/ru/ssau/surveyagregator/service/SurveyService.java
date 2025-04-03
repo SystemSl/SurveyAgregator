@@ -10,9 +10,9 @@ import ru.ssau.surveyagregator.model.User;
 import ru.ssau.surveyagregator.repository.SurveyRepository;
 import ru.ssau.surveyagregator.requests.AnswerRequest;
 import ru.ssau.surveyagregator.requests.SurveyFormRequest;
-import ru.ssau.surveyagregator.responses.AdminSurveyResponse;
-import ru.ssau.surveyagregator.responses.AdminSurveysResponse;
 import ru.ssau.surveyagregator.responses.SurveyResponse;
+import ru.ssau.surveyagregator.responses.UserSurveyResponse;
+import ru.ssau.surveyagregator.responses.UserSurveysResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +65,7 @@ public class SurveyService {
     }
 
     @Transactional
-    public AdminSurveysResponse findSurveys(UUID id) {
+    public UserSurveysResponse findSurveys(UUID id) {
         List<Survey> surveys = surveyRepository.findSurveysByAdminId(id);
         List<String> titles = new ArrayList<>();
         List<String> descriptions = new ArrayList<>();
@@ -75,22 +75,22 @@ public class SurveyService {
             descriptions.add(s.getSurveyDescription());
             ids.add(s.getId());
         }
-        return new AdminSurveysResponse(titles, descriptions, ids);
+        return new UserSurveysResponse(titles, descriptions, ids);
     }
 
     @Transactional
-    public AdminSurveyResponse findAdminSurvey(UUID id) {
+    public UserSurveyResponse findAdminSurvey(UUID id) {
         Survey survey = surveyRepository.findById(id).get();
-        AdminSurveyResponse response = new AdminSurveyResponse();
+        UserSurveyResponse response = new UserSurveyResponse();
         response.setTitle(survey.getSurveyTitle());
         response.setDescription(survey.getSurveyDescription());
-        List<AdminSurveyResponse.QuestionResponse> questionResponses = new ArrayList<>();
+        List<UserSurveyResponse.QuestionResponse> questionResponses = new ArrayList<>();
         for (Question question : survey.getQuestions()) {
-            List<AdminSurveyResponse.AnswerResponse> answerResponses = new ArrayList<>();
-            AdminSurveyResponse.QuestionResponse questionResponse = new AdminSurveyResponse.QuestionResponse();
+            List<UserSurveyResponse.AnswerResponse> answerResponses = new ArrayList<>();
+            UserSurveyResponse.QuestionResponse questionResponse = new UserSurveyResponse.QuestionResponse();
             questionResponse.setQuestionText(question.getQuestionText());
             for (Answer answer : question.getAnswers()) {
-                AdminSurveyResponse.AnswerResponse answerResponse = new AdminSurveyResponse.AnswerResponse(answer.getAnswerText(), answer.getAnswerQuantity());
+                UserSurveyResponse.AnswerResponse answerResponse = new UserSurveyResponse.AnswerResponse(answer.getAnswerText(), answer.getAnswerQuantity());
                 answerResponses.add(answerResponse);
             }
             questionResponse.setAnswers(answerResponses);

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class AdminSurveyResponse {
+public class UserSurveyResponse {
     private List<QuestionResponse> questions;
     private String title;
     private String description;

@@ -3,7 +3,7 @@ package ru.ssau.surveyagregator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.ssau.surveyagregator.service.AdminService;
+import ru.ssau.surveyagregator.service.UserServiceImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -11,15 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AdminTests {
 
     @Autowired
-    private AdminService adminService;
+    private UserServiceImpl userServiceImpl;
 
     @Test
     public void testRegisterUser() {
         String name = "admin";
         String email = "admin@example.com";
         String password = "password";
-        //Admin admin = new Admin(name, email, password);
-        //System.out.printf();
-        assertEquals(true, adminService.registerAdmin(name, email, password));
+        assertEquals(true, userServiceImpl.registerAdmin(name, email, password));
     }
 }

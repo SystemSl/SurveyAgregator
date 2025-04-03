@@ -7,10 +7,10 @@ import ru.ssau.surveyagregator.model.Answer;
 import ru.ssau.surveyagregator.model.Question;
 import ru.ssau.surveyagregator.model.Survey;
 import ru.ssau.surveyagregator.model.User;
-import ru.ssau.surveyagregator.service.AdminService;
 import ru.ssau.surveyagregator.service.AnswerService;
 import ru.ssau.surveyagregator.service.QuestionService;
 import ru.ssau.surveyagregator.service.SurveyService;
+import ru.ssau.surveyagregator.service.UserServiceImpl;
 
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class GlobalTest {
 
     @Autowired
-    private AdminService adminService;
+    private UserServiceImpl userServiceImpl;
 
     @Autowired
     private SurveyService surveyService;
@@ -31,7 +31,7 @@ public class GlobalTest {
 
     @Test
     public void testAllEntities() {
-        adminService.clear();
+        userServiceImpl.clear();
         surveyService.clear();
         String name = "admin";
         String email = "admin@example.com";
@@ -45,7 +45,7 @@ public class GlobalTest {
         Answer A21 = Answer.builder().answerText("Yes").build();
         Answer A22 = Answer.builder().answerText("No").build();
         Survey survey = Survey.builder().surveyDescription(description).surveyTitle(title).build();
-        User user = User.builder().name(name).password(password).email(email).build();
+        User user = User.builder().username(name).password(password).email(email).build();
         Q1.addAnswer(A11);
         Q1.addAnswer(A12);
         Q2.addAnswer(A21);
@@ -53,7 +53,7 @@ public class GlobalTest {
         survey.addQuestion(Q1);
         survey.addQuestion(Q2);
         survey.addUser(user);
-        adminService.registerAdmin(user);
+        userServiceImpl.registerAdmin(user);
         surveyService.createSurvey(survey);
     }
 

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class AdminProfileResponse {
+public class UserProfileResponse {
     private String email;
     private String name;
 }

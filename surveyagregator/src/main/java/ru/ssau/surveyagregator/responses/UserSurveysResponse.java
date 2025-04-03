@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Data
-public class AdminSurveysResponse {
+public class UserSurveysResponse {
     private List<String> titles;
     private List<String> descriptions;
     private List<UUID> ids;

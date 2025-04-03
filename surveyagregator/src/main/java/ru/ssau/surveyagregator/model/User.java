@@ -11,12 +11,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "admins")
-public class Admin {
+@Table(name = "users_table")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name="adminid")
-    private UUID adminId;
+    @Column(name = "id")
+    private UUID id;
     @Column(name="name")
     private String name;
     @Column(name="email")

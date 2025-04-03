@@ -9,6 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface SurveyRepository extends JpaRepository<Survey, UUID> {
-    @Query("SELECT s FROM Survey s JOIN s.admins a WHERE a.adminId = :adminId")
-    List<Survey> findSurveysByAdminId(@Param("adminId") UUID adminId);
+    @Query("SELECT s FROM Survey s JOIN s.users u WHERE u.id = :userId")
+    List<Survey> findSurveysByAdminId(@Param("userId") UUID userId);
 }

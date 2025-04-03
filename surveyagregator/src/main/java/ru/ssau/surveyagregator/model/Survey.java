@@ -13,15 +13,15 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "surveys")
+@Table(name = "surveys_table")
 public class Survey {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "surveyid")
-    private UUID surveyId;
-    @Column(name = "surveytitle")
+    @Column(name = "id")
+    private UUID id;
+    @Column(name = "survey_title")
     private String surveyTitle;
-    @Column(name = "surveydescription")
+    @Column(name = "survey_description")
     private String surveyDescription;
 
     @Builder.Default
@@ -31,17 +31,17 @@ public class Survey {
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "surveyCreators",
-            joinColumns = { @JoinColumn(name = "surveyid") },
-            inverseJoinColumns = { @JoinColumn(name = "adminid") })
-    private Set<Admin> admins = new HashSet<>();
+            name = "surveycreators_table",
+            joinColumns = {@JoinColumn(name = "survey_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    private Set<User> users = new HashSet<>();
 
     public void addQuestion(Question question) {
         question.setSurvey(this);
         questions.add(question);
     }
 
-    public void addAdmin(Admin admin) {
-        admins.add(admin);
+    public void addUser(User user) {
+        users.add(user);
     }
 }

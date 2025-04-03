@@ -3,7 +3,7 @@ package ru.ssau.surveyagregator.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.ssau.surveyagregator.model.Admin;
+import ru.ssau.surveyagregator.model.User;
 import ru.ssau.surveyagregator.requests.AdminFormRequest;
 import ru.ssau.surveyagregator.requests.AdminLoginRequest;
 import ru.ssau.surveyagregator.requests.AdminUpdateRequest;
@@ -24,8 +24,8 @@ public class AdminController {
 
     @PostMapping("/surveys")
     ResponseEntity<?> createSurvey(@RequestBody SurveyFormRequest survey) {
-        List<Admin> admins = adminService.findAllById(survey.getAdminId());
-        surveyService.createSurvey(survey, admins);
+        List<User> users = adminService.findAllById(survey.getAdminId());
+        surveyService.createSurvey(survey, users);
         return ResponseEntity.ok("Survey was created");
     }
 
@@ -42,8 +42,8 @@ public class AdminController {
 
     @GetMapping("/profile")
     ResponseEntity<?> profileAdmin(@RequestParam UUID id) {
-        Admin admin = adminService.findById(id);
-        return ResponseEntity.ok(new AdminProfileResponse(admin.getEmail(), admin.getName()));
+        User user = adminService.findById(id);
+        return ResponseEntity.ok(new AdminProfileResponse(user.getEmail(), user.getName()));
     }
 
     @GetMapping("/surveys")
@@ -58,8 +58,8 @@ public class AdminController {
 
     @PutMapping("/profile")
     ResponseEntity<?> updateSurvey(@RequestParam UUID id, @RequestBody AdminUpdateRequest request) {
-        Admin admin = adminService.findById(id);
-        adminService.update(request, admin);
+        User user = adminService.findById(id);
+        adminService.update(request, user);
         return ResponseEntity.ok("Profile updated");
     }
 }

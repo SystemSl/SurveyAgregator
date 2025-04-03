@@ -3,10 +3,10 @@ package ru.ssau.surveyagregator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.ssau.surveyagregator.model.Admin;
 import ru.ssau.surveyagregator.model.Answer;
 import ru.ssau.surveyagregator.model.Question;
 import ru.ssau.surveyagregator.model.Survey;
+import ru.ssau.surveyagregator.model.User;
 import ru.ssau.surveyagregator.service.AdminService;
 import ru.ssau.surveyagregator.service.AnswerService;
 import ru.ssau.surveyagregator.service.QuestionService;
@@ -45,15 +45,15 @@ public class GlobalTest {
         Answer A21 = Answer.builder().answerText("Yes").build();
         Answer A22 = Answer.builder().answerText("No").build();
         Survey survey = Survey.builder().surveyDescription(description).surveyTitle(title).build();
-        Admin admin = Admin.builder().name(name).password(password).email(email).build();
+        User user = User.builder().name(name).password(password).email(email).build();
         Q1.addAnswer(A11);
         Q1.addAnswer(A12);
         Q2.addAnswer(A21);
         Q2.addAnswer(A22);
         survey.addQuestion(Q1);
         survey.addQuestion(Q2);
-        survey.addAdmin(admin);
-        adminService.registerAdmin(admin);
+        survey.addUser(user);
+        adminService.registerAdmin(user);
         surveyService.createSurvey(survey);
     }
 

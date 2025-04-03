@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.ssau.surveyagregator.model.Admin;
-import ru.ssau.surveyagregator.repository.AdminRepository;
+import ru.ssau.surveyagregator.model.User;
+import ru.ssau.surveyagregator.repository.UserRepository;
 import ru.ssau.surveyagregator.requests.AdminFormRequest;
 import ru.ssau.surveyagregator.requests.AdminUpdateRequest;
 
@@ -14,57 +14,57 @@ import java.util.UUID;
 
 @Service
 public class AdminService {
-    private final AdminRepository adminRepository;
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public AdminService(AdminRepository adminRepository, BCryptPasswordEncoder passwordEncoder) {
-        this.adminRepository = adminRepository;
+    public AdminService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
     public boolean registerAdmin(String name, String email, String password) {
         String encodedPassword = passwordEncoder.encode(password);
-        Admin newAdmin = Admin.builder().name(name).password(password).email(email).build();
-        adminRepository.save(newAdmin);
+        User newUser = User.builder().name(name).password(password).email(email).build();
+        userRepository.save(newUser);
         return true;
     }
 
     @Transactional
-    public boolean registerAdmin(Admin newAdmin) {
-        newAdmin.setPassword(passwordEncoder.encode(newAdmin.getPassword()));
-        adminRepository.save(newAdmin);
+    public boolean registerAdmin(User newUser) {
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        userRepository.save(newUser);
         return true;
     }
 
     @Transactional
     public boolean registerAdmin(AdminFormRequest admin) {
-        Admin newAdmin = Admin.builder().name(admin.getName()).password(admin.getPassword()).email(admin.getEmail()).build();
-        newAdmin.setPassword(passwordEncoder.encode(newAdmin.getPassword()));
-        adminRepository.save(newAdmin);
+        User newUser = User.builder().name(admin.getName()).password(admin.getPassword()).email(admin.getEmail()).build();
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        userRepository.save(newUser);
         return true;
     }
 
     @Transactional
-    public Admin findById(UUID id) {
-        return adminRepository.findById(id).get();
+    public User findById(UUID id) {
+        return userRepository.findById(id).get();
     }
 
     @Transactional
-    public List<Admin> findAllById(List<UUID> ids) {
-        return adminRepository.findAllById(ids);
+    public List<User> findAllById(List<UUID> ids) {
+        return userRepository.findAllById(ids);
     }
 
     @Transactional
-    public boolean update(AdminUpdateRequest request, Admin admin) {
-        admin.setEmail(request.getEmail());
-        admin.setName(request.getName());
-        adminRepository.save(admin);
+    public boolean update(AdminUpdateRequest request, User user) {
+        user.setEmail(request.getEmail());
+        user.setName(request.getName());
+        userRepository.save(user);
         return true;
     }
 
     public void clear() {
-        adminRepository.deleteAll();
+        userRepository.deleteAll();
     }
 }

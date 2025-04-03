@@ -12,20 +12,20 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "answers")
+@Table(name = "answers_table")
 public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "answerid")
-    private UUID answerId;
-    @Column(name = "answertext")
+    @Column(name = "id")
+    private UUID id;
+    @Column(name = "answer_text")
     private String answerText;
     @Builder.Default
-    @Column(name = "answerquantity")
+    @Column(name = "answer_quantity")
     private BigDecimal answerQuantity = BigDecimal.valueOf(0);
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "questionid", nullable = false)
+    @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
 }

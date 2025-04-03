@@ -3,10 +3,10 @@ package ru.ssau.surveyagregator.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.ssau.surveyagregator.model.Admin;
 import ru.ssau.surveyagregator.model.Answer;
 import ru.ssau.surveyagregator.model.Question;
 import ru.ssau.surveyagregator.model.Survey;
+import ru.ssau.surveyagregator.model.User;
 import ru.ssau.surveyagregator.repository.SurveyRepository;
 import ru.ssau.surveyagregator.requests.AnswerRequest;
 import ru.ssau.surveyagregator.requests.SurveyFormRequest;
@@ -43,14 +43,14 @@ public class SurveyService {
     }
 
     @Transactional
-    public boolean createSurvey(SurveyFormRequest survey, List<Admin> admins) {
+    public boolean createSurvey(SurveyFormRequest survey, List<User> users) {
         Survey newSurvey = Survey
                 .builder()
                 .surveyDescription(survey.getDescription())
                 .surveyTitle(survey.getTitle())
                 .build();
-        for (Admin admin : admins) {
-            newSurvey.addAdmin(admin);
+        for (User user : users) {
+            newSurvey.addUser(user);
         }
         for (SurveyFormRequest.QuestionRequest formQuestion : survey.getQuestions()) {
             Question question = Question.builder().questionText(formQuestion.getQuestionText()).build();
@@ -73,7 +73,7 @@ public class SurveyService {
         for (Survey s : surveys) {
             titles.add(s.getSurveyTitle());
             descriptions.add(s.getSurveyDescription());
-            ids.add(s.getSurveyId());
+            ids.add(s.getId());
         }
         return new AdminSurveysResponse(titles, descriptions, ids);
     }
@@ -112,7 +112,7 @@ public class SurveyService {
             SurveyResponse.QuestionResponse questionResponse = new SurveyResponse.QuestionResponse();
             questionResponse.setQuestionText(question.getQuestionText());
             for (Answer answer : question.getAnswers()) {
-                SurveyResponse.AnswerResponse answerResponse = new SurveyResponse.AnswerResponse(answer.getAnswerText(), answer.getAnswerId());
+                SurveyResponse.AnswerResponse answerResponse = new SurveyResponse.AnswerResponse(answer.getAnswerText(), answer.getId());
                 answerResponses.add(answerResponse);
             }
             questionResponse.setAnswers(answerResponses);

@@ -13,17 +13,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "questions")
+@Table(name = "questions_table")
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "questionid")
-    private UUID questionId;
-    @Column(name = "questiontext")
+    @Column(name = "id")
+    private UUID id;
+    @Column(name = "question_text")
     private String questionText;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="surveyid", nullable = false)
+    @JoinColumn(name = "survey_id", nullable = false)
     private Survey survey;
 
     @Builder.Default

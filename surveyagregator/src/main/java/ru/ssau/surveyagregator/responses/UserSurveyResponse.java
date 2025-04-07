@@ -3,10 +3,11 @@ package ru.ssau.surveyagregator.responses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class AdminSurveyResponse {
+public class UserSurveyResponse {
     private List<QuestionResponse> questions;
     private String title;
     private String description;
@@ -20,6 +21,6 @@ public class AdminSurveyResponse {
     @Data
     public static class AnswerResponse {
         private String answer;
-        private Integer quantity;
+        private BigDecimal quantity;
     }
 }

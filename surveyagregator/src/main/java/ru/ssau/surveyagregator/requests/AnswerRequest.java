@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class AnswerRequest {
-    private List<Integer> answersId;
+    private List<String> answerIds;
 }

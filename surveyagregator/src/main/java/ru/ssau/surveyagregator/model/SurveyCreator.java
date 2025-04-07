@@ -3,18 +3,18 @@ package ru.ssau.surveyagregator.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "surveycreators")
+@Table(name = "surveycreators_table")
 public class SurveyCreator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "adminrelid")
-    private Integer adminRelId;
+    @Column(name = "id")
+    private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "surveyid", nullable = false)
+    @JoinColumn(name = "survey_id", nullable = false)
     private Survey survey;
 
     @ManyToOne
-    @JoinColumn(name = "adminid", nullable = false)
-    private Admin admin;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

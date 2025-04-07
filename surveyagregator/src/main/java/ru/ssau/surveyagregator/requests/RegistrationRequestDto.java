@@ -3,7 +3,9 @@ package ru.ssau.surveyagregator.requests;
 import lombok.Data;
 
 @Data
-public class AdminUpdateRequest {
-    private String name;
+public class RegistrationRequestDto {
+
+    private String username;
     private String email;
+    private String password;
 }

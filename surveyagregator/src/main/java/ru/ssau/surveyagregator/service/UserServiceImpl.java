@@ -10,6 +10,7 @@ import ru.ssau.surveyagregator.repository.UserRepository;
 import ru.ssau.surveyagregator.requests.UserFormRequest;
 import ru.ssau.surveyagregator.requests.UserUpdateRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,44 +24,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public boolean registerAdmin(String name, String email, String password) {
-        //String encodedPassword = passwordEncoder.encode(password);
-        User newUser = User.builder().username(name).password(password).email(email).build();
-        userRepository.save(newUser);
-        return true;
-    }
-
-    @Transactional
-    public boolean registerAdmin(User newUser) {
-        //newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        userRepository.save(newUser);
-        return true;
-    }
-
-    @Transactional
-    public boolean registerAdmin(UserFormRequest admin) {
-        User newUser = User.builder().username(admin.getName()).password(admin.getPassword()).email(admin.getEmail()).build();
-        //newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        userRepository.save(newUser);
-        return true;
-    }
-
-    @Transactional
-    public User findById(UUID id) {
-        return userRepository.findById(id).get();
-    }
-
-    @Transactional
     public List<User> findAllById(List<UUID> ids) {
-        return userRepository.findAllById(ids);
-    }
-
-    @Transactional
-    public boolean update(UserUpdateRequest request, User user) {
-        user.setEmail(request.getEmail());
-        user.setUsername(request.getName());
-        userRepository.save(user);
-        return true;
+        if (ids == null || ids.isEmpty())
+            return new ArrayList<>();
+        else
+            return userRepository.findAllById(ids);
     }
 
     public void clear() {

@@ -21,19 +21,6 @@ public class AnswerService {
     }
 
     @Transactional
-    public boolean createAnswer(String text) {
-        Answer newAnswer = Answer.builder().answerText(text).build();
-        answerRepository.save(newAnswer);
-        return true;
-    }
-
-    @Transactional
-    public boolean createAnswer(Answer newAnswer) {
-        answerRepository.save(newAnswer);
-        return true;
-    }
-
-    @Transactional
     public boolean saveAnswer(List<String> answersId) {
         List<UUID> ids = new ArrayList<>();
         for (String id : answersId) {
@@ -44,10 +31,6 @@ public class AnswerService {
             answer.setAnswerQuantity(answer.getAnswerQuantity().add(BigDecimal.ONE));
         }
         return true;
-    }
-
-    public void clear() {
-        answerRepository.deleteAll();
     }
 }
 

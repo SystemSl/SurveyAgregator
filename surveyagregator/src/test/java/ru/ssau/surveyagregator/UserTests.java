@@ -8,16 +8,12 @@ import ru.ssau.surveyagregator.service.UserServiceImpl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class AdminTests {
+public class UserTests {
 
     @Autowired
     private UserServiceImpl userServiceImpl;
 
     @Test
     public void testRegisterUser() {
-        String name = "admin";
-        String email = "admin@example.com";
-        String password = "password";
-        assertEquals(true, userServiceImpl.registerAdmin(name, email, password));
     }
 }

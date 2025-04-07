@@ -14,15 +14,13 @@ import java.util.UUID;
 public class SurveyController {
     private final SurveyService surveyService;
 
-    @GetMapping("/{id}")
-    ResponseEntity<?> findSurvey(@PathVariable UUID id) {
+    @GetMapping()
+    ResponseEntity<?> findSurvey(@RequestParam UUID id) {
         return ResponseEntity.ok(surveyService.findSurvey(id));
     }
 
-    @PostMapping("/{id}")
-    ResponseEntity<?> sendAnswer(@PathVariable UUID id, @RequestBody AnswerRequest answer) {
-        System.out.println("avo");
-        surveyService.saveAnswer(id, answer);
-        return ResponseEntity.ok("Answers saved");
+    @PostMapping()
+    ResponseEntity<?> sendAnswer(@RequestParam UUID id, @RequestBody AnswerRequest answer) {
+        return surveyService.saveAnswer(id, answer);
     }
 }

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Data
 public class SurveyFormRequest {
-    private List<UUID> adminId;
+    private List<UUID> userIds;
     private List<QuestionRequest> questions;
     private String title;
     private String description;

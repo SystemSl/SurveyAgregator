@@ -1,6 +1,7 @@
 package ru.ssau.surveyagregator.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ssau.surveyagregator.model.Answer;
@@ -11,7 +12,6 @@ import ru.ssau.surveyagregator.repository.SurveyRepository;
 import ru.ssau.surveyagregator.requests.AnswerRequest;
 import ru.ssau.surveyagregator.requests.SurveyFormRequest;
 import ru.ssau.surveyagregator.responses.SurveyResponse;
-import ru.ssau.surveyagregator.responses.UserSurveyResponse;
 import ru.ssau.surveyagregator.responses.UserSurveysResponse;
 
 import java.util.ArrayList;
@@ -27,19 +27,6 @@ public class SurveyService {
     public SurveyService(SurveyRepository surveyRepository, AnswerService answerService) {
         this.surveyRepository = surveyRepository;
         this.answerService = answerService;
-    }
-
-    @Transactional
-    public boolean createSurvey(String title, String description) {
-        Survey newSurvey = Survey.builder().surveyDescription(description).surveyTitle(title).build();
-        surveyRepository.save(newSurvey);
-        return true;
-    }
-
-    @Transactional
-    public boolean createSurvey(Survey newSurvey) {
-        surveyRepository.save(newSurvey);
-        return true;
     }
 
     @Transactional
@@ -66,7 +53,7 @@ public class SurveyService {
 
     @Transactional
     public UserSurveysResponse findSurveys(UUID id) {
-        List<Survey> surveys = surveyRepository.findSurveysByAdminId(id);
+        List<Survey> surveys = surveyRepository.findSurveysByUserId(id);
         List<String> titles = new ArrayList<>();
         List<String> descriptions = new ArrayList<>();
         List<UUID> ids = new ArrayList<>();
@@ -79,25 +66,13 @@ public class SurveyService {
     }
 
     @Transactional
-    public UserSurveyResponse findAdminSurvey(UUID id) {
-        Survey survey = surveyRepository.findById(id).get();
-        UserSurveyResponse response = new UserSurveyResponse();
-        response.setTitle(survey.getSurveyTitle());
-        response.setDescription(survey.getSurveyDescription());
-        List<UserSurveyResponse.QuestionResponse> questionResponses = new ArrayList<>();
-        for (Question question : survey.getQuestions()) {
-            List<UserSurveyResponse.AnswerResponse> answerResponses = new ArrayList<>();
-            UserSurveyResponse.QuestionResponse questionResponse = new UserSurveyResponse.QuestionResponse();
-            questionResponse.setQuestionText(question.getQuestionText());
-            for (Answer answer : question.getAnswers()) {
-                UserSurveyResponse.AnswerResponse answerResponse = new UserSurveyResponse.AnswerResponse(answer.getAnswerText(), answer.getAnswerQuantity());
-                answerResponses.add(answerResponse);
-            }
-            questionResponse.setAnswers(answerResponses);
-            questionResponses.add(questionResponse);
+    public List<UUID> findSurveysIds(UUID id) {
+        List<Survey> surveys = surveyRepository.findSurveysByUserId(id);
+        List<UUID> ids = new ArrayList<>();
+        for (Survey s : surveys) {
+            ids.add(s.getId());
         }
-        response.setQuestions(questionResponses);
-        return response;
+        return ids;
     }
 
     @Transactional
@@ -123,10 +98,10 @@ public class SurveyService {
     }
 
     @Transactional
-    public boolean saveAnswer(UUID id, AnswerRequest request) {
+    public ResponseEntity<?> saveAnswer(UUID id, AnswerRequest request) {
         Survey survey = surveyRepository.findById(id).get();
-        answerService.saveAnswer(request.getAnswersId());
-        return true;
+        answerService.saveAnswer(request.getAnswerIds());
+        return ResponseEntity.ok("Ответ сохранён");
     }
 
     public void clear() {

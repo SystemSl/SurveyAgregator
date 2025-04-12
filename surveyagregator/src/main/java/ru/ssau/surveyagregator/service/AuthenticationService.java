@@ -195,11 +195,7 @@ public class AuthenticationService {
             else {
                 return ResponseEntity.badRequest().build();
             }
-        }
-        catch(AuthenticationException e) {
-            return ResponseEntity.ok("Неправильный старый пароль");
-        }
-        catch(SignatureException e) {
+        } catch (AuthenticationException | SignatureException e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -245,7 +241,7 @@ public class AuthenticationService {
         List<User> users = userServiceImpl.findAllById(survey.getUserIds());
         users.add(user);
         surveyService.createSurvey(survey, users);
-        return ResponseEntity.ok("Опрос создан");
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Transactional

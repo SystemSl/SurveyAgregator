@@ -12,7 +12,7 @@ import ru.ssau.surveyagregator.repository.SurveyRepository;
 import ru.ssau.surveyagregator.requests.AnswerRequest;
 import ru.ssau.surveyagregator.requests.SurveyFormRequest;
 import ru.ssau.surveyagregator.responses.SurveyResponse;
-import ru.ssau.surveyagregator.responses.UserSurveysResponse;
+import ru.ssau.surveyagregator.responses.UserProfileResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,17 +52,13 @@ public class SurveyService {
     }
 
     @Transactional
-    public UserSurveysResponse findSurveys(UUID id) {
+    public List<UserProfileResponse.SurveysInfo> findSurveys(UUID id) {
         List<Survey> surveys = surveyRepository.findSurveysByUserId(id);
-        List<String> titles = new ArrayList<>();
-        List<String> descriptions = new ArrayList<>();
-        List<UUID> ids = new ArrayList<>();
+        List<UserProfileResponse.SurveysInfo> surveysInfos = new ArrayList<>();
         for (Survey s : surveys) {
-            titles.add(s.getSurveyTitle());
-            descriptions.add(s.getSurveyDescription());
-            ids.add(s.getId());
+            surveysInfos.add(new UserProfileResponse.SurveysInfo(s.getId(), s.getSurveyTitle(), s.getSurveyDescription()));
         }
-        return new UserSurveysResponse(titles, descriptions, ids);
+        return surveysInfos;
     }
 
     @Transactional

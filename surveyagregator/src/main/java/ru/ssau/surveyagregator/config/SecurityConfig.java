@@ -46,10 +46,9 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/login/**", "/registration/**", "/css/**", "/refresh_token/**", "/surveys/**", "/main/**")
-                            .permitAll();
                     //auth.requestMatchers("/user/**").hasAuthority("USER");
-                    auth.anyRequest().authenticated();
+                    auth.requestMatchers("/user/**").authenticated();
+                    auth.anyRequest().permitAll();
                 }).userDetailsService(userServiceImpl)
                 .exceptionHandling(e -> {
                     e.accessDeniedHandler(accessDeniedHandler);

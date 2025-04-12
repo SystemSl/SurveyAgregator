@@ -12,5 +12,13 @@ public class UserProfileResponse {
     private String email;
     private String username;
     private String id;
-    private UserSurveysResponse surveys;
+    private List<SurveysInfo> surveys;
+
+    @AllArgsConstructor
+    @Data
+    public static class SurveysInfo {
+        private UUID id;
+        private String title;
+        private String description;
+    }
 }

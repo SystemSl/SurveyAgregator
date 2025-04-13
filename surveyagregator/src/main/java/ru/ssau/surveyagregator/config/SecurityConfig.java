@@ -47,7 +47,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> {
                     //auth.requestMatchers("/user/**").hasAuthority("USER");
-                    auth.requestMatchers("/user/**").authenticated();
+                    auth.requestMatchers("/api/user/**").authenticated();
                     auth.anyRequest().permitAll();
                 }).userDetailsService(userServiceImpl)
                 .exceptionHandling(e -> {
@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .addFilterBefore(jwtFIlter, UsernamePasswordAuthenticationFilter.class)
                 .logout(log -> {
-                    log.logoutUrl("/logout");
+                    log.logoutUrl("/api/logout");
                     log.addLogoutHandler(customLogoutHandler);
                     log.logoutSuccessHandler((request, response, authentication) ->
                             SecurityContextHolder.clearContext());

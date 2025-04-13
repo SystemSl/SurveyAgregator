@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Профиль пользователя</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .profile-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 25px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .loading {
+            font-style: italic;
+            color: gray;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="profile-container">
+    <h2>Профиль пользователя</h2>
+
+    <div class="user-data"></div>
+    <div class="error-message"></div>
+</div>
+
+<script>
+    const userDataContainer = document.querySelector('.user-data');
+    const errorMessage = document.querySelector('.error-message');
+
+    async function getUserProfile() {
+        try {
+            // Получаем access token из localStorage
+            const accessToken = localStorage.getItem('accessToken');
+
+            if (!accessToken) {
+                throw new Error('Access token отсутствует.');
+            }
+
+            // Выполняем запрос к API с передачей access token в заголовке Authorization
+            const response = await fetch('/user', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const profileData = await response.json(); // Предположим, что возвращается объект { username, email }
+
+                // Отображаем данные профиля на странице
+                userDataContainer.innerHTML = `
+                    <p><strong>Имя пользователя:</strong> ${profileData.username}</p>
+                    <p><strong>Email:</strong> ${profileData.email}</p>
+                `;
+            } else {
+                throw new Error('Не удалось загрузить профиль.');
+            }
+        } catch (err) {
+            errorMessage.textContent = err.message;
+        }
+    }
+
+    // Вызываем функцию загрузки профиля при загрузке страницы
+    getUserProfile();
+</script>
+</body>
+</html>

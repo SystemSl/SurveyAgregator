@@ -15,6 +15,7 @@ import ru.ssau.surveyagregator.responses.SurveyResponse;
 import ru.ssau.surveyagregator.responses.UserProfileResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,7 +73,9 @@ public class SurveyService {
     }
 
     @Transactional
-    public SurveyResponse findSurvey(UUID id) {
+    public ResponseEntity<?> findSurvey(UUID id) {
+        if (!surveyRepository.existsById(id))
+            return ResponseEntity.notFound().build();
         Survey survey = surveyRepository.findById(id).get();
         SurveyResponse response = new SurveyResponse();
         response.setTitle(survey.getSurveyTitle());
@@ -90,12 +93,11 @@ public class SurveyService {
             questionResponses.add(questionResponse);
         }
         response.setQuestions(questionResponses);
-        return response;
+        return ResponseEntity.ok(response);
     }
 
     @Transactional
-    public ResponseEntity<?> saveAnswer(UUID id, AnswerRequest request) {
-        Survey survey = surveyRepository.findById(id).get();
+    public ResponseEntity<?> saveAnswer(AnswerRequest request) {
         answerService.saveAnswer(request.getAnswerIds());
         return ResponseEntity.ok("Ответ сохранён");
     }

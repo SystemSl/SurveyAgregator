@@ -59,4 +59,12 @@ public class AuthenticationController {
     ) {
         return authenticationService.refreshToken(request, response);
     }
+
+    @PostMapping("/access_token")
+    public ResponseEntity<?> accessToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        return ResponseEntity.ok("OK");
+    }
 }

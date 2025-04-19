@@ -1,13 +1,45 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Регистрация</title>
+    <script>
+        async function getUserProfile() {
+        let accessToken = localStorage.getItem('accessToken');
+            let refreshToken = localStorage.getItem('refreshToken');
+
+            const response1 = await fetch('/access_token', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response1.status === 200) {
+                window.location.replace("/user");
+            }
+            else if (response1.status === 401) {
+                const response2 = await fetch('/refresh_token', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${refreshToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response2.status === 200) {
+                    window.location.replace("/user");
+                }
+            }
+        }
+        getUserProfile();
+    </script>
     <style>
         * {
             box-sizing: border-box;
         }
+
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -17,6 +49,41 @@
             margin: 0;
             background-color: #f4f4f4;
         }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            padding: 10px 20px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 10px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
         form {
             background-color: #fff;
             padding: 30px;
@@ -24,16 +91,20 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 400px;
             text-align: center;
+            margin-top: 50px; /* Немного сдвигаем форму вниз, чтобы освободить место для хедера */
         }
+
         h2 {
             margin-bottom: 25px;
         }
+
         label {
             display: inline-block;
             margin-bottom: 10px;
             text-align: left;
             width: 100%;
         }
+
         input {
             width: 100%;
             padding: 10px;
@@ -41,6 +112,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         button {
             padding: 10px 20px;
             background-color: #007bff;
@@ -49,13 +121,35 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
+        .buttons-group {
+            display: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .buttons-group button {
+            width: 48%; /* Каждой кнопке даем половину пространства */
+        }
+
         .error-message {
             color: red;
             margin-top: 10px;
         }
     </style>
 </head>
+
 <body>
+<!-- Верхний блок с кнопками для навигации -->
+<header>
+    <nav>
+        <ul>
+            <li><a href="/">Главная</a></li>
+            <li><a href="/login">Войти</a></li>
+        </ul>
+    </nav>
+</header>
+
 <form id="registration-form">
     <h2>Регистрация</h2>
     <label for="username">Логин:</label>
@@ -67,7 +161,10 @@
     <label for="password">Пароль:</label>
     <input id="password" minlength="6" name="password" required type="password">
 
-    <button type="submit">Зарегистрироваться</button>
+    <div class="buttons-group">
+        <button type="submit">Зарегистрироваться</button>
+    </div>
+
     <div class="error-message"></div>
 </form>
 
@@ -75,23 +172,20 @@
     const form = document.getElementById('registration-form');
     const errorMessage = document.querySelector('.error-message');
 
-    form.addEventListener('submit', async function(event) {
+    form.addEventListener('submit', async function (event) {
         event.preventDefault();
 
-        // Валидация формы
         if (!validateForm()) {
             return;
         }
 
         try {
-            // Сбор данных из формы
             const data = {
                 username: document.getElementById('username').value,
                 email: document.getElementById('email').value,
                 password: document.getElementById('password').value
             };
 
-            // Преобразование данных в JSON
             const response = await fetch('/registration', {
                 method: 'POST',
                 headers: {
@@ -102,9 +196,16 @@
 
             if (response.ok) {
                 console.log('Успешная регистрация!');
-                window.location.replace("/login"); // Переход на страницу успеха после успешной регистрации
+                window.location.replace("/login");
             } else {
-                throw new Error('Ошибка регистрации');
+                const text = await response.text();
+                if (text.includes('email')) {
+                    throw new Error('Данная почта занята');
+                } else if (text.includes('username')) {
+                    throw new Error('Данное имя пользователя занято');
+                } else {
+                    throw new Error('Ошибка регистрации');
+                }
             }
         } catch (err) {
             errorMessage.textContent = err.message;
@@ -114,14 +215,12 @@
     function validateForm() {
         let isValid = true;
 
-        // Проверка поля Логин
         const usernameInput = document.getElementById('username');
         if (usernameInput.value.length < 3 || usernameInput.value.length > 16) {
             errorMessage.textContent = 'Логин должен содержать от 3 до 16 символов.';
             isValid = false;
         }
 
-        // Проверка поля Пароль
         const passwordInput = document.getElementById('password');
         if (passwordInput.value.length < 6) {
             errorMessage.textContent = 'Пароль должен содержать минимум 6 символов.';
@@ -132,4 +231,5 @@
     }
 </script>
 </body>
+
 </html>

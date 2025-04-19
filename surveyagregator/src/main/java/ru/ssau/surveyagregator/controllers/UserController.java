@@ -37,7 +37,7 @@ public class UserController {
         return authenticationService.userInfo(request, response);
     }
 
-    @GetMapping("/surveys")
+    @GetMapping("/survey")
     ResponseEntity<?> adminSurvey(
             HttpServletRequest request,
             HttpServletResponse response,

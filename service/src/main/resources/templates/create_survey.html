@@ -353,7 +353,11 @@
                     if (response.ok) {
                         alert('Опрос успешно создан!');
                         window.location.replace("/user");
-                    } else {
+                    }
+                    else if (response.status === 400) {
+                        alert('Неправильные ID соавторов');
+                    }
+                    else {
                         console.error('Ошибка при создании опроса');
                     }
                 })

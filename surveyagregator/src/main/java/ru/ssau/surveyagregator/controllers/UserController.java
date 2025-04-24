@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     private final AuthenticationService authenticationService;
     private final SurveyService surveyService;
@@ -37,7 +37,7 @@ public class UserController {
         return authenticationService.userInfo(request, response);
     }
 
-    @GetMapping("/surveys")
+    @GetMapping("/survey")
     ResponseEntity<?> adminSurvey(
             HttpServletRequest request,
             HttpServletResponse response,

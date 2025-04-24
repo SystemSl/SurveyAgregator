@@ -10,17 +10,17 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/surveys")
+@RequestMapping("/api/survey")
 public class SurveyController {
     private final SurveyService surveyService;
 
     @GetMapping()
     ResponseEntity<?> findSurvey(@RequestParam UUID id) {
-        return ResponseEntity.ok(surveyService.findSurvey(id));
+        return surveyService.findSurvey(id);
     }
 
     @PostMapping()
-    ResponseEntity<?> sendAnswer(@RequestParam UUID id, @RequestBody AnswerRequest answer) {
-        return surveyService.saveAnswer(id, answer);
+    ResponseEntity<?> sendAnswer(@RequestBody AnswerRequest answer) {
+        return surveyService.saveAnswer(answer);
     }
 }

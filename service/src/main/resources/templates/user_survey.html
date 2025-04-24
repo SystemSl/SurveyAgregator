@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Статистика опроса</title>
+    <style>
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            padding: 10px 20px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 10px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .survey-stats-container {
+            margin-top: 200px;
+            margin-bottom: 100px;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 20px;
+        }
+
+        .question-container {
+            margin-bottom: 50px;
+        }
+
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .answer-container {
+            margin-bottom: 10px;
+        }
+
+        .answer-text {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .quantity {
+            font-weight: bold;
+        }
+
+        .copy-url-btn {
+            padding: 10px 15px;
+            background-color: #008000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a href="/">Главная</a></li>
+            <li><a href="/user">Профиль</a></li>
+        </ul>
+    </nav>
+</header>
+<div class="survey-stats-container">
+    <button class="copy-url-btn" onclick="copyUrl()">Скопировать ссылку на опрос</button>
+    <div id="survey-stats"></div>
+    <div id="error-text"></div>
+</div>
+
+<script>
+    let surveyUrl = "localhost:8081/survey?id="
+    async function getUserSurvey() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+
+        let accessToken = localStorage.getItem('accessToken');
+        let refreshToken = localStorage.getItem('refreshToken');
+        if (!accessToken || !refreshToken) {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            window.location.replace("/login");
+        }
+
+        const response1 = await fetch('/access_token', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response1.status === 401) {
+            const response2 = await fetch('/refresh_token', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${refreshToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response2.status === 401) {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                window.location.replace("/login");
+            }
+            else {
+                const tokens = await response2.json();
+
+                localStorage.setItem('accessToken', tokens.accessToken);
+                localStorage.setItem('refreshToken', tokens.refreshToken);
+                accessToken = tokens.accessToken;
+                refreshToken = tokens.refreshToken;
+            }
+        }
+        surveyUrl += id
+        fetch(`/user/survey?id=${id}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status == 403) {
+                    const errorContainer = document.getElementById('error-text');
+                    errorContainer.innerHTML = `
+                <h1>Ошибка 403</h1>
+                <p>Нет доступа к этой странице.</p>
+                <p><a href="/">Вернуться на главную страницу</a></p>
+            `;
+                    throw new Error('Нет доступа');
+                }
+                else {
+                    throw new Error('Ошибка при выполнении запроса');
+                }
+            })
+            .then(data => {
+                displaySurveyStats(data);
+            })
+            .catch(error => {
+                console.error('Ошибка при выполнении запроса:', error);
+            });
+    }
+
+    function displaySurveyStats(stats) {
+        const statsContainer = document.getElementById('survey-stats');
+        statsContainer.innerHTML = '';
+
+        const nameStats = document.createElement('h2');
+        nameStats.textContent = "Статистика опроса";
+        statsContainer.appendChild(nameStats);
+
+        const title = document.createElement('h3');
+        title.textContent = stats.title;
+        statsContainer.appendChild(title);
+
+        const description = document.createElement('p');
+        description.textContent = stats.description;
+        statsContainer.appendChild(description);
+
+        let passed = stats.questions[0].answers.reduce((sum, answer) => sum + answer.quantity, 0);
+
+        stats.questions.forEach((question, index) => {
+            const questionContainer = document.createElement('div');
+            questionContainer.classList.add('question-container');
+
+            const questionTitle = document.createElement('h4');
+            questionTitle.classList.add('question-title');
+            questionTitle.textContent = `${question.questionText}`;
+            questionContainer.appendChild(questionTitle);
+
+            question.answers.forEach(answer => {
+                const answerContainer = document.createElement('div');
+                answerContainer.classList.add('answer-container');
+
+                const answerText = document.createElement('span');
+                answerText.classList.add('answer-text');
+                answerText.textContent = answer.answer;
+                answerContainer.appendChild(answerText);
+
+                const quantity = document.createElement('span');
+                quantity.classList.add('quantity');
+                let percent = +(answer.quantity / passed * 100).toFixed(2);
+                quantity.textContent = `(${answer.quantity}, ${percent}%)`;
+                answerContainer.appendChild(quantity);
+
+                questionContainer.appendChild(answerContainer);
+            });
+
+            statsContainer.appendChild(questionContainer);
+        });
+    }
+
+    function copyUrl() {
+            if (surveyUrl) {
+                navigator.clipboard.writeText(surveyUrl)
+                    .then(() => {
+                        alert('Ссылка успешно скопирована в буфер обмена!');
+                    })
+                    .catch(err => {
+                        console.error('Ошибка при копировании:', err);
+                        alert('Не удалось скопировать ссылку.');
+                    });
+            } else {
+                alert('Ссылка ещё не загружен.');
+            }
+        }
+
+    getUserSurvey();
+</script>
+</body>
+
+</html>

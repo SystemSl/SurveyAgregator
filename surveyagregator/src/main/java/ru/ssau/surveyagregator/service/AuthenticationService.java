@@ -1,5 +1,6 @@
 package ru.ssau.surveyagregator.service;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -288,6 +289,26 @@ public class AuthenticationService {
         }
         else {
             throw new AccessDeniedException("403 returned");
+        }
+    }
+
+    public ResponseEntity<?> accessToken(
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        try {
+            String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            String token = authorizationHeader.substring(7);
+
+            String username = jwtService.extractUsername(token);
+            return ResponseEntity.ok("");
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 }

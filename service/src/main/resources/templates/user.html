@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Профиль пользователя</title>
+    <style>
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            padding: 10px 20px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 10px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .profile-container {
+            margin-top: 200px;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .loading {
+            font-style: italic;
+            color: gray;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .survey-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 20px;
+        }
+
+        .survey-list li a {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .top-right-buttons {
+            position: absolute;
+            top: 90px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button.logout-btn,
+        button.change-password-btn,
+        button.copy-id-btn {
+            padding: 10px 15px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.change-password-btn {
+            background-color: #007bff;
+        }
+
+        button.copy-id-btn {
+            background-color: #008000;
+        }
+
+        button.create-survey-btn {
+            font-size: 16px;
+            padding: 10px 15px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a href="/">Главная</a></li>
+        </ul>
+    </nav>
+</header>
+<div class="top-right-buttons">
+    <button class="copy-id-btn" onclick="copyId()">Скопировать свой id</button>
+    <button class="change-password-btn" onclick="changePassword()">Изменить пароль</button>
+    <button class="logout-btn" onclick="logout()">Выйти</button>
+</div>
+<div class="profile-container">
+
+    <h2>Профиль пользователя</h2>
+
+    <div class="user-data"></div>
+    <div class="error-message"></div>
+    <button class="create-survey-btn" onclick="window.location.replace('/user/create');">Создать опрос</button>
+
+    <div class="surveys-container">
+        <h3>Ваши опросы</h3>
+        <ul class="survey-list"></ul>
+    </div>
+</div>
+
+<script>
+    const userDataContainer = document.querySelector('.user-data');
+    const errorMessage = document.querySelector('.error-message');
+    const surveysList = document.querySelector('.survey-list');
+
+    let userID;
+
+    async function getUserProfile() {
+        try {
+            let accessToken = localStorage.getItem('accessToken');
+            let refreshToken = localStorage.getItem('refreshToken');
+            if (!accessToken || !refreshToken) {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                window.location.replace("/login");
+            }
+
+            const response1 = await fetch('/access_token', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response1.status === 401) {
+                const response2 = await fetch('/refresh_token', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${refreshToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response2.status === 401) {
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    window.location.replace("/login");
+                }
+                else {
+                    const tokens = await response2.json();
+
+                    localStorage.setItem('accessToken', tokens.accessToken);
+                    localStorage.setItem('refreshToken', tokens.refreshToken);
+                    accessToken = tokens.accessToken;
+                    refreshToken = tokens.refreshToken;
+                }
+            }
+            const response = await fetch('/user', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                const profileData = await response.json();
+
+                userID = profileData.id;
+
+                userDataContainer.innerHTML = `
+                <p><strong>Имя пользователя:</strong> ${profileData.username}</p>
+                <p><strong>Email:</strong> ${profileData.email}</p>
+            `;
+
+                renderSurveys(profileData.surveys);
+            } else {
+                throw new Error('Не удалось загрузить профиль.');
+            }
+        } catch (err) {
+            errorMessage.textContent = err.message;
+        }
+    }
+
+    function renderSurveys(surveys) {
+        if (surveys && surveys.length > 0) {
+            surveys.forEach(survey => {
+                const link = document.createElement('a');
+                link.href = `/user/survey?id=${survey.id}`;
+                link.textContent = `${survey.title}: ${survey.description}`;
+                link.className = 'survey-link';
+
+                const listItem = document.createElement('li');
+                listItem.appendChild(link);
+
+                surveysList.appendChild(listItem);
+            });
+        } else {
+            surveysList.innerHTML = '<li>У вас нет опросов.</li>';
+        }
+    }
+
+    function logout() {
+        window.location.replace("/logout");
+    }
+
+    function changePassword() {
+        window.location.replace("/user/change_password");
+    }
+
+    function copyId() {
+        if (userID) {
+            navigator.clipboard.writeText(userID)
+                .then(() => {
+                    alert('Ваш ID успешно скопирован в буфер обмена!');
+                })
+                .catch(err => {
+                    console.error('Ошибка при копировании:', err);
+                    alert('Не удалось скопировать ID.');
+                });
+        } else {
+            alert('ID пользователя ещё не загружен.');
+        }
+    }
+
+    getUserProfile();
+</script>
+</body>
+
+</html>

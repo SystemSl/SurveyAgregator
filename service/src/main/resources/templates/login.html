@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Авторизация</title>
+    <script>
+        async function getUserProfile() {
+        let accessToken = localStorage.getItem('accessToken');
+            let refreshToken = localStorage.getItem('refreshToken');
+
+            const response1 = await fetch('/access_token', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response1.status === 200) {
+                window.location.replace("/user");
+            }
+            else if (response1.status === 401) {
+                const response2 = await fetch('/refresh_token', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${refreshToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response2.status === 200) {
+                    window.location.replace("/user");
+                }
+            }
+        }
+        getUserProfile();
+    </script>
+    <style>
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            padding: 10px 20px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 10px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 350px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            text-align: left;
+            width: 100%;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .buttons-group {
+            display: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .buttons-group button {
+            width: 48%; /* Даем каждому примерно половину пространства */
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a href="/">Главная</a></li>
+            <li><a href="/registration">Зарегистрироваться</a></li>
+        </ul>
+    </nav>
+</header>
+<form id="login-form">
+    <h2>Вход</h2>
+    <label for="username">Логин:</label>
+    <input id="username" name="username" required type="text">
+
+    <label for="password">Пароль:</label>
+    <input id="password" name="password" required type="password">
+
+    <div class="buttons-group">
+        <button type="submit">Войти</button>
+    </div>
+
+    <div class="error-message"></div>
+</form>
+
+<script>
+    const form = document.getElementById('login-form');
+    const errorMessage = document.querySelector('.error-message');
+
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        if (!validateForm()) {
+            return;
+        }
+
+        try {
+            const data = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                const tokens = await response.json();
+
+                localStorage.setItem('accessToken', tokens.accessToken);
+                localStorage.setItem('refreshToken', tokens.refreshToken);
+
+                console.log('Токены успешно получены и сохранены.');
+                window.location.replace("/user");
+            } else {
+                throw new Error('Неверный логин или пароль.');
+            }
+        } catch (err) {
+            errorMessage.textContent = err.message;
+        }
+    });
+
+    function validateForm() {
+        let isValid = true;
+
+        const usernameInput = document.getElementById('username');
+        if (usernameInput.value.trim().length === 0) {
+            errorMessage.textContent = 'Поле "Логин" обязательно для заполнения.';
+            isValid = false;
+        }
+
+        const passwordInput = document.getElementById('password');
+        if (passwordInput.value.trim().length === 0) {
+            errorMessage.textContent = 'Поле "Пароль" обязательно для заполнения.';
+            isValid = false;
+        }
+
+        return isValid;
+    }
+</script>
+</body>
+
+</html>

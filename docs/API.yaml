@@ -1,267 +1,449 @@
 openapi: 3.0.0
 info: 
   title: Survey agregator API
-  version: 0.0.1
+  version: 0.0.2
 paths:
-  /admin/register:
+  /api/registration:
     post:
       tags:
-       - admin
-      summary: Admin registration
+       - main
+      summary: User registration
+      requestBody:
+        required: True
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequestDto'
       responses:
-        '200':
-          description: Registration success
-          content:
-            application/json:
-              schema:
-                type: object
-      parameters:
-        - name: Name
-          in: query
-          description: Name
-          schema:
-            type: string
-        - name: Email
-          in: query
-          required: True
-          description: Name
-          schema:
-            type: string
-        - name: Password
-          in: query
-          required: True
-          description: Name
-          schema:
-            type: string
-  /admin/login:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+  
+  /api/login:
     post:
       tags:
-       - admin
-      summary: Admin login
+       - main
+      summary: User login
+      requestBody:
+        required: True
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDto'
       responses:
         '200':
-          description: Login success
+          description: OK
           content:
             application/json:
               schema:
-                type: object
-      parameters:
-        - name: Email
-          in: query
-          required: True
-          description: Name
-          schema:
-            type: string
-        - name: Password
-          in: query
-          required: True
-          description: Name
-          schema:
-            type: string
-  /admin/profile:
-    get:
+                $ref: "#/components/schemas/AuthenticationResponseDto"
+        '401':
+          description: Unauthorized
+                
+  /api/refresh_token:
+    post:
       tags:
-       - admin
-      summary: Admin profile
-      responses:
-        '200':
-          description: Info received
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Profile"
+       - main
+      summary: Generate new tokens using refresh token
       parameters:
         - name: token
-          in: cookie
+          in: header
           required: True
-          description: Name
           schema:
             type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationResponseDto"
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+                
+  /api/access_token:
+    post:
+      tags:
+       - main
+      summary: Access token check
+      parameters:
+        - name: token
+          in: header
+          required: True
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+  
+  /api/user/profile:
+    get:
+      tags:
+       - user
+      summary: User profile
+      parameters:
+        - name: token
+          in: header
+          required: True
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfileResponse"
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
     put:
       tags:
-       - admin
+       - user
       summary: Profile update
-      responses:
-        '200':
-          description: Info updated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Profile"
-      parameters:
-        - name: Name
-          in: query
-          required: False
-          description: New name
-          schema:
-            type: string
-        - name: Email
-          in: query
-          required: False
-          description: New email
-          schema:
-            type: string
-  /admin/logout:
-    delete:
-      tags:
-       - admin
-      summary: Logout from account
-      responses:
-        '200':
-          description: Exit success
-  /admin/surveys/new:
-    post:
-      tags:
-       - admin
-      summary: Create new survey
-      responses:
-        '200':
-          description: Survey created
-      parameters:
-        - name: Survey
-          in: query
-          schema:
-            $ref: "#/components/schemas/Survey"
-  /admin/surveys:
-    get:
-      tags:
-       - admin
-      summary: Survey list
       parameters:
         - name: token
-          in: cookie
+          in: header
+          required: True
+          schema:
+            type: string
+      requestBody:
+        required: True
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+
+  /api/user/logout:
+    delete:
+      tags:
+       - user
+      summary: Logout from account
+      parameters:
+        - name: token
+          in: header
           required: True
           schema:
             type: string
       responses:
         '200':
-          description: Survey list success
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Survey"
-  /admin/surveys/{SurveyID}:
+          description: OK
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+  
+  /api/user/create:
+    post:
+      tags:
+       - user
+      summary: Create new survey
+      parameters:
+        - name: token
+          in: header
+          required: True
+          schema:
+            type: string
+      requestBody:
+        required: True
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SurveyFormRequest'
+      responses:
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+  /api/user/survey:
     get:
       tags:
-       - admin
+       - user
       summary: Survey by id
       parameters:
         - name: token
-          in: cookie
+          in: header
           required: True
           schema:
             type: string
-        - name: SurveyID
-          in: path
+        - name: id
+          in: query
           required: True
           schema:
             type: string
       responses:
         '200':
-          description: Survey list found success
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Survey"
-  /surveys/{SurveyID}:
+                $ref: "#/components/schemas/UserSurveyResponse"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+  
+  /api/survey:
     get:
       tags:
        - survey
       summary: Survey by id
       parameters:
-        - name: SurveyID
-          in: path
+        - name: id
+          in: query
           required: True
           schema:
             type: string
       responses:
         '200':
-          description: Survey found success
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Survey"
-  /surveys/{SurveyID}/submit:
+                $ref: "#/components/schemas/SurveyResponse"
+        '404':
+          description: Not found
     post:
       tags:
        - survey
       summary: Survey answers send
       parameters:
-        - name: SurveyID
-          in: path
-          required: True
-          schema:
-            type: string
-        - name: Answers
+        - name: id
           in: query
           required: True
           schema:
-            type: array
-            items:
-              $ref: "#/components/schemas/Answer"
+            type: string
+      requestBody:
+        required: True
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnswerRequest'
       responses:
         '200':
-          description: Result sended success
+          description: OK
   
 components:
   schemas:
-    Profile:
+    RegistrationRequestDto:
       type: object
       required:
-        - Name
-        - Email
+        - username
+        - email
+        - password
       properties:
-        Name:
+        username:
           type: string
-          example: example
-        Email:
+        email:
           type: string
-          example: example@example.com
-    Survey:
+        password:
+          type: string
+          
+    LoginRequestDto:
       type: object
       required:
-        - Title
-        - Description
-        - Questions
+        - username
+        - password
       properties:
-        SurveyID:
+        username:
           type: string
-        Title:
+        password:
           type: string
-        Description:
+          
+    AuthenticationResponseDto:
+      type: object
+      required:
+        - refreshToken
+        - accessToken
+      properties:
+        refreshToken:
           type: string
-        Questions:
+        accessToken:
+          type: string
+          
+    UserProfileResponse:
+      type: object
+      required:
+        - email
+        - username
+        - id
+      properties:
+        email:
+          type: string
+        username:
+          type: string
+        id:
+          type: string
+        surveys:
           type: array
           items:
-            $ref: "#/components/schemas/Question"
-    Question:
+            $ref: "#/components/schemas/SurveysInfo"
+            
+    UserUpdateRequest:
       type: object
       required:
-        - Text
-        - Answers
+        - oldPassword
+        - newPassword
       properties:
-        QuestionID:
+        oldPassword:
           type: string
-        SurveyID:
+        newPassword:
           type: string
-        Text:
+            
+    SurveysInfo:
+      type: object
+      required:
+        - id
+        - title
+        - description
+      properties:
+        id:
           type: string
-        Answers:
+        title:
+          type: string
+        description:
+          type: string  
+          
+    SurveyFormRequest:
+      type: object
+      required:
+        - questions
+        - title
+        - description
+      properties:
+        userIds:
           type: array
           items:
-            $ref: "#/components/schemas/Answer"
-    Answer:
+            type: string
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionRequest"
+        title:
+          type: string
+        description:
+          type: string
+        
+    QuestionRequest:
       type: object
       required:
-        - Text
+        - questionText
+        - answers
       properties:
-        AnswerQuantity:
+        questionText:
+          type: string
+        answers:
+          type: array
+          items:
+            type: string
+      
+    UserSurveyResponse:
+      type: object
+      required:
+        - questions
+        - title
+        - description
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionResponse"
+        title:
+          type: string
+        description:
+          type: string
+          
+    QuestionResponse:
+      type: object
+      required:
+        - questionText
+        - answers
+      properties:
+        questionText:
+          type: string
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnswerResponse"
+      
+    AnswerResponse:
+      type: object
+      required:
+        - answer
+        - quantity
+      properties:
+        answer:
+          type: string
+        quantity:
           type: integer
-        QuestionID:
+      
+    SurveyResponse:
+      type: object
+      required:
+        - questions
+        - title
+        - description
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionResponseSR"
+        title:
           type: string
-        AnswerID:
+        description:
           type: string
-        AnswerText:
+          
+    QuestionResponseSR:
+      type: object
+      required:
+        - questionText
+        - answers
+      properties:
+        questionText:
           type: string
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnswerResponseSR"
+      
+    AnswerResponseSR:
+      type: object
+      required:
+        - answer
+        - id
+      properties:
+        answer:
+          type: string
+        id:
+          type: string
+          
+    AnswerRequest:
+      type: object
+      required:
+        - answerIds
+      properties:
+        answerIds:
+          type: array
+          items:
+            type: string

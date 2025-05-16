@@ -6,34 +6,41 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Авторизация</title>
     <script>
-        async function getUserProfile() {
-        let accessToken = localStorage.getItem('accessToken');
+        async function tokenCheck() {
+            let accessToken = localStorage.getItem('accessToken');
             let refreshToken = localStorage.getItem('refreshToken');
-
-            const response1 = await fetch('/access_token', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (response1.status === 200) {
-                window.location.replace("/user");
-            }
-            else if (response1.status === 401) {
-                const response2 = await fetch('/refresh_token', {
+            if (!accessToken || !refreshToken) {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+            } else {
+                const response1 = await fetch('/access_token', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${refreshToken}`,
+                        'Authorization': `Bearer ${accessToken}`,
                         'Content-Type': 'application/json'
                     }
                 });
-                if (response2.status === 200) {
+                if (response1.status === 200) {
                     window.location.replace("/user");
+                }
+                else if (response1.status === 401) {
+                    const response2 = await fetch('/refresh_token', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${refreshToken}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (response2.status === 200) {
+                        window.location.replace("/user");
+                    } else {
+                        localStorage.removeItem('accessToken');
+                        localStorage.removeItem('refreshToken');
+                    }
                 }
             }
         }
-        getUserProfile();
+        tokenCheck();
     </script>
     <style>
         header {
